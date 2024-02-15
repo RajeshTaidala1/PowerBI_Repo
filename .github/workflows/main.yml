@@ -18,4 +18,4 @@ jobs:
           clientId: ${{ vars.AZURE_CLIENT_ID }}
           clientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
           workspaceId: ${{ secrets.POWERBI_WORKSPACE_ID }}
-          reportFilePath: 'path/to/yourReport.pbix'
+          reportFilePath: 'Power BI Assignment.pbix'
