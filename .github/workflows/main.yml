@@ -3,25 +3,19 @@ name: Power BI CI/CD
 on:
   push:
     branches:
-      - main  # Adjust this according to your branch name
+      - main
 
 jobs:
-  deploy:
-    runs-on: windows-latest
-    environment: development
+  deploy-powerbi-report:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Install Power BI CLI
-        run: |
-          npm install -g powerbi-cli
-
-      - name: Deploy Power BI reports
-        env:
-          TENANT_ID: ${{ vars.TENANT_ID }}
-          CLIENT_ID: ${{ vars.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
-        run: |
-          pbi import -f "path/to/your/report.pbix" -w ${{ secrets.WORKSPACE_ID }} -t ${{ vars.TENANT_ID }} -i ${{ vars.CLIENT_ID }}D -s ${{ secrets.CLIENT_SECRET }}
+      - name: Deploy Report to Power BI
+        uses: powerbi-actions/deploy-report@v1
+        with:
+          tenantId: ${{ vars.AZURE_TENANT_ID }}
+          clientId: ${{ vars.AZURE_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          workspaceId: ${{ secrets.POWERBI_WORKSPACE_ID }}
+          reportFilePath: 'path/to/yourReport.pbix'
