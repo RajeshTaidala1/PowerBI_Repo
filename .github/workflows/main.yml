@@ -19,9 +19,9 @@ jobs:
 
       - name: Deploy Power BI reports
         env:
-          TENANT_ID: ${{ secrets.TENANT_ID }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          TENANT_ID: ${{ vars.TENANT_ID }}
+          CLIENT_ID: ${{ vars.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
         run: |
-          pbi import -f "path/to/your/report.pbix" -w $WORKSPACE_ID -t $TENANT_ID -i $CLIENT_ID -s $CLIENT_SECRET
+          pbi import -f "path/to/your/report.pbix" -w ${{ secrets.WORKSPACE_ID }} -t ${{ vars.TENANT_ID }} -i ${{ vars.CLIENT_ID }}D -s ${{ secrets.CLIENT_SECRET }}
