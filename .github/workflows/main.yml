@@ -1,21 +1,51 @@
-name: Power BI CI/CD
+name: Deploy Power BI Report
 
 on:
   push:
     branches:
-      - main
+      - main # or your specific branch
 
 jobs:
-  deploy-powerbi-report:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: windows-latest
+    environment: development
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Deploy Report to Power BI
-        uses: powerbi-actions/deploy-report@v1
-        with:
-          tenantId: ${{ vars.AZURE_TENANT_ID }}
-          clientId: ${{ vars.AZURE_CLIENT_ID }}
-          clientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          workspaceId: ${{ secrets.POWERBI_WORKSPACE_ID }}
-          reportFilePath: 'Power BI Assignment.pbix'
+    - name: Deploy Power BI Report
+      env:
+        TENANT_ID: ${{ vars.TENANT_ID }}
+        CLIENT_ID: ${{ vars.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        # Authenticate with Azure
+        $body = @{
+            grant_type = "client_credentials"
+            resource = "https://analysis.windows.net/powerbi/api"
+            client_id = $env:CLIENT_ID
+            client_secret = $env:CLIENT_SECRET
+            scope = "openid"
+        }
+        $tokenResponse = Invoke-RestMethod -Method Post -Uri "https://login.microsoftonline.com/$env:TENANT_ID/oauth2/token" -Body $body
+        $token = $tokenResponse.access_token
+
+        # Set the path to your .pbix file
+        $filePath = "Power BI Assignment.pbix"
+        $fileName = [System.IO.Path]::GetFileName($filePath)
+        
+        # Deploy the report to Power BI
+        $importUrl = "https://api.powerbi.com/v1.0/myorg/groups/$env:WORKSPACE_ID/imports?datasetDisplayName=$fileName&skipReport=true"
+        $headers = @{
+            "Authorization" = "Bearer $token"
+            "Content-Type" = "multipart/form-data"
+        }
+        $fileBytes = [System.IO.File]::ReadAllBytes($filePath)
+        $fileContent = [System.Net.Http.ByteArrayContent]::new($fileBytes)
+        $content = [System.Net.Http.MultipartFormDataContent]::new()
+        $content.Add($fileContent, "file", $fileName)
+
+        $response = Invoke-RestMethod -Method Post -Uri $importUrl -Headers $headers -Body $content
+        Write-Output "Report uploaded successfully: $($response.id)"
