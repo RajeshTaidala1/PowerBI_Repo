@@ -1,4 +1,4 @@
-name: Migrate via Pipeline
+    name: Migrate via Pipeline
     on:
       push:
         branches:
