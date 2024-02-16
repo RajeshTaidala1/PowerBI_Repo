@@ -1,29 +1,28 @@
-
-name: Deploy to workspace
-on:
+name: Migrate via Pipeline
+    on:
       push:
         branches:
           - main
-jobs:
-  Deploy-Asset:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v19
-        with:
-          separator: ","
-          quotepath: false
-      - name: Power BI Workspace Deploy
-        uses: nathangiusti/Power-BI-Workspace-Deploy@v1.2
-        with:
-          files: ${{ steps.changed-files.outputs.all_modified_files }}
-          separator: ","
-          tenant_id: 'bf4c4a22-6fa6-4f8a-b416-2e9b29f5722f'
-          config_file: ".github/config/workspace-deploy-config.yaml"
-        env:
-          CLIENT_ID: ${{ vars.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+    jobs:
+      Deploy-Asset:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+            with:
+              fetch-depth: 0
+          - name: Get changed files
+            id: changed-files
+            uses: tj-actions/changed-files@v12
+            with:
+              separator: ","
+              quotepath: false
+          - name: Power BI Pipeline Deploy
+            uses: nathangiusti/Power-BI-Pipeline-Deploy@v2.5
+            with:
+              files: ${{ steps.changed-files.outputs.all_modified_files }}
+              separator: ","
+              tenant_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              config_file: ".github/config/pipeline-deploy-config.yaml"
+            env:
+              CLIENT_ID: ${{ secrets.CLIENT_ID }}
+              CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
