@@ -11,7 +11,7 @@ def main():
 
     config_path = sys.argv[2]
     separator = sys.argv[3]
-    tenant_id = sys.argv[4]
+    tenant_id = os.environ['TENANT_ID']
 
     with open(config_path, 'r') as yml_file:
         cfg = yaml.safe_load(yml_file)
