@@ -25,5 +25,5 @@ jobs:
           tenant_id: 'bf4c4a22-6fa6-4f8a-b416-2e9b29f5722f'
           config_file: ".github/config/workspace-deploy-config.yaml"
         env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_ID: ${{ vars.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
