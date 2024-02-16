@@ -1,6 +1,9 @@
 
 name: Deploy to workspace
-on: [pull_request]
+on:
+      push:
+        branches:
+          - main
 jobs:
   Deploy-Asset:
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
         with:
           files: ${{ steps.changed-files.outputs.all_modified_files }}
           separator: ","
-          tenant_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          tenant_id: ${{ vars.TENANT_ID }}
           config_file: ".github/config/workspace-deploy-config.yaml"
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
