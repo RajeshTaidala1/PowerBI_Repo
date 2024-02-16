@@ -1,51 +1,26 @@
-name: Deploy Power BI Report
 
-on:
-  push:
-    branches:
-      - main # or your specific branch
-
+name: Deploy to workspace
+on: [pull_request]
 jobs:
-  deploy:
-    runs-on: windows-latest
-    environment: development
+  Deploy-Asset:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Deploy Power BI Report
-      env:
-        TENANT_ID: ${{ vars.TENANT_ID }}
-        CLIENT_ID: ${{ vars.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
-      shell: pwsh
-      run: |
-        $ErrorActionPreference = "Stop"
-        # Authenticate with Azure
-        $body = @{
-            grant_type = "client_credentials"
-            resource = "https://analysis.windows.net/powerbi/api"
-            client_id = $env:CLIENT_ID
-            client_secret = $env:CLIENT_SECRET
-            scope = "openid"
-        }
-        $tokenResponse = Invoke-RestMethod -Method Post -Uri "https://login.microsoftonline.com/$env:TENANT_ID/oauth2/token" -Body $body
-        $token = $tokenResponse.access_token
-
-        # Set the path to your .pbix file
-        $filePath = "Power BI Assignment.pbix"
-        $fileName = [System.IO.Path]::GetFileName($filePath)
-        
-        # Deploy the report to Power BI
-        $importUrl = "https://api.powerbi.com/v1.0/myorg/groups/$env:WORKSPACE_ID/imports?datasetDisplayName=$fileName&skipReport=true"
-        $headers = @{
-            "Authorization" = "Bearer $token"
-            "Content-Type" = "multipart/form-data"
-        }
-        $fileBytes = [System.IO.File]::ReadAllBytes($filePath)
-        $fileContent = [System.Net.Http.ByteArrayContent]::new($fileBytes)
-        $content = [System.Net.Http.MultipartFormDataContent]::new()
-        $content.Add($fileContent, "file", $fileName)
-
-        $response = Invoke-RestMethod -Method Post -Uri $importUrl -Headers $headers -Body $content
-        Write-Output "Report uploaded successfully: $($response.id)"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v19
+        with:
+          separator: ","
+          quotepath: false
+      - name: Power BI Workspace Deploy
+        uses: nathangiusti/Power-BI-Workspace-Deploy@v1.2
+        with:
+          files: ${{ steps.changed-files.outputs.all_modified_files }}
+          separator: ","
+          tenant_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          config_file: ".github/config/workspace-deploy-config.yaml"
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
