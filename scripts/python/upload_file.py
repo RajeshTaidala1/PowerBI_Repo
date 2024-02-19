@@ -111,7 +111,7 @@ def main():
 
         if os.path.getsize(file_location) / (1024 * 1024) < max_file_size_supported_in_mb and file_extension in [".pbix", ".rdl"]:
             open_file = open(file_location, "rb")
-            workspace_id = config["deploy_location"]["workspace_id"]
+            workspace_id = config[deploy_location[workspace_id]]
 
             headers = {'Authorization': access_token}
             file = {'file': open_file}
