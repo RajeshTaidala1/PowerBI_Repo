@@ -23,3 +23,4 @@ jobs:
         env:
           CLIENT_ID: ${{ vars. CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
