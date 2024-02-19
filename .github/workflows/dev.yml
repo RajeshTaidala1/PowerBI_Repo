@@ -21,4 +21,4 @@ jobs:
           files: ${{ steps.changed-files.outputs.all_modified_files }}
         env:
           CLIENT_ID: ${{ vars. CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRE }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
