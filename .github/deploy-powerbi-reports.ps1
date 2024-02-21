@@ -11,7 +11,7 @@ foreach ($reportFile in $reportFiles) {
     $reportFilePath = $reportFile.FullName
     
     # Publish report to workspace
-Invoke-RestMethod -Uri https://api.powerbi.com/v1.0/myorg/groups/$workspaceId/imports?datasetDisplayName=$reportName&nameConflict=CreateOrOverwrite -Method Post -Headers @{
+Invoke-RestMethod -Uri "https://api.powerbi.com/v1.0/myorg/groups/$workspaceId/imports?datasetDisplayName=$reportName&nameConflict=CreateOrOverwrite" -Method Post -Headers @{
         "Authorization" = "Bearer $accessToken"
     } -InFile $reportFilePath -ContentType "multipart/form-data"
 }
