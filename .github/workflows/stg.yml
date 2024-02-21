@@ -1,9 +1,9 @@
-name: PowerBI Deployment
+name: PowerBI Deployment to Stage
  
 on:
   push:
     branches:
-      - development
+      - staging
  
 jobs:
   deploy:
@@ -26,4 +26,4 @@ jobs:
         POWERBI_PASSWORD: ${{ secrets.POWERBI_PASSWORD }}
       run: |
         # Run your PowerShell script here to deploy Power BI reports
-        .\deploy-powerbi-reports.ps1
+        .\deploy-powerbi-reports.ps
