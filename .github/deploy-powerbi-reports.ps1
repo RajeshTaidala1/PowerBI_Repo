@@ -1,12 +1,6 @@
 # Variables
 $workspaceId = "a0bec0fb-588d-477e-b39f-1eac7103e551"
-$accessToken = "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"
-$gitRepoUrl = https://github.com/RajeshTaidala1/PowerBI_Repo
-$localRepoPath = "C:\Users\rajesht\PowerBI_Repo"
 $reportFilesPath = "C:\Users\rajesht\PowerBI_Repo\Reports" # Assuming reports are in a specific folder
- 
-# Clone the GitHub repository
-git clone $gitRepoUrl $localRepoPath
  
 # Get list of report files
 $reportFiles = Get-ChildItem -Path $reportFilesPath -Filter *.pbix
