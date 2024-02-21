@@ -1,26 +1,29 @@
-name: Workflow Name
+name: PowerBI Deployment
+ 
 on:
   push:
-    branches: [development]
+    branches:
+      - development
+ 
 jobs:
-  Deploy-Asset:
-    runs-on: ubuntu-latest
-    environment: staging
+  deploy:
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v19
-        with:
-          separator: ","
-          quotepath: "false"
-      - name: Upload files
-        uses: mohitnayar123/power-bi-utils@v1.0.3 # Replace this with the latest version
-        with:
-          files: ${{ steps.changed-files.outputs.all_modified_files }}
-        env:
-          CLIENT_ID: ${{ vars. CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
+    - name: Checkout repository
+      uses: actions/checkout@v2
+ 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+ 
+    - name: Install Power BI PowerShell Module
+      run: Install-Module -Name MicrosoftPowerBIMgmt -Force -AllowClobber -Scope CurrentUser
+ 
+    - name: Run PowerShell Script
+      env:
+        POWERBI_USERNAME: ${{ secrets.POWERBI_USERNAME }}
+        POWERBI_PASSWORD: ${{ secrets.POWERBI_PASSWORD }}
+      run: |
+        # Run your PowerShell script here to deploy Power BI reports
+        .\deploy-powerbi-reports.ps1
