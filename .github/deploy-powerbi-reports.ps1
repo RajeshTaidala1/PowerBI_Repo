@@ -1,6 +1,6 @@
 # Variables
 $workspaceId = "a0bec0fb-588d-477e-b39f-1eac7103e551"
-$reportFilesPath = "C:/Users/rajesht/PowerBI_Repo/Reports" # Assuming reports are in a specific folder
+$reportFilesPath = "./Reports" # Assuming reports are in a specific folder
  
 # Get list of report files
 $reportFiles = Get-ChildItem -Path $reportFilesPath -Filter *.pbix
